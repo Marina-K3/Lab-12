@@ -2,7 +2,7 @@
 #include<conio.h>
 #include<iostream>
 #include<stdlib.h>
-/*Создать однонаправленный список для целых чисел в порядке возрастания.(Использовать пример 12.1) 
+/*Создать однонаправленный список для целых чисел в порядке возрастания.(Использовать пример 12.1)
 Написать следующие функции для работы со списком:
 - countList - подсчет числа элементов;
 - findMax - поиск максимального элемента списка;
@@ -26,7 +26,7 @@ void add(int v) {
 	p = (node*)malloc(sizeof(node));//новый узел
 	p->value = v;
 	p->next = NULL;
-	//место для вставки элемента в порядке возрастания (если не первый)
+	//поиск места для вставки элемента в порядке возрастания (если не первый)
 	while (cur != NULL && v > cur->value) {
 		prev = cur;
 		cur = cur->next;
@@ -79,13 +79,12 @@ int findMin() {
 	}
 	return min;
 }
-void removeRep(int h) {
+void removeRep() {
 	int k = count();
-
 	for (int i = 0; i < k - 1; i++) {
-		node* prev = list, * cur = list->next, * p, * dop;
+		node* prev = list, * cur = list->next, * p;
 		// если удаляемый элемент после первого в списке
-		if (h == list->value && cur->value == h) {
+		if (list->value == cur->value) {
 			p = list;
 			list = list->next;
 			free(p);
@@ -93,12 +92,11 @@ void removeRep(int h) {
 		}
 		else {
 
-			while (cur != NULL && cur->value != h) {
+			while (cur != NULL && cur->value != prev->value) {
 				prev = cur;
 				cur = cur->next;
 			}
-			dop = cur->next;
-			if (cur != NULL && dop->value == h) {
+			if (cur != NULL && cur->value == prev->value) {
 				p = cur;
 				prev->next = cur->next;
 				free(p);
@@ -108,19 +106,27 @@ void removeRep(int h) {
 		}
 	}
 }
-void removeAll(int y) {
+
+
+void removeAll() {
+	int flag = 0;
+	int f = 0;
 	int k = count();
-	// если удаляемый элемент первый в списке
 	for (int i = 0; i < k; i++) {
-		node* prev = list, * cur = list->next, * p;
-		if (y == list->value) {
+		node* prev = list, * cur = list->next, * p, * dop = NULL;
+		// если удаляемый элемент первый в списке
+		if (cur->value == list->value) {
 			p = list;
 			list = list->next;
+			cur = cur->next;
 			free(p);
+			flag = 1;
 		}
 		else {
 			// находим удаляемые элементы
-			while (cur != NULL && cur->value != y) {
+
+			while (cur != NULL && cur->value != prev->value) {
+				dop = prev;
 				prev = cur;
 				cur = cur->next;
 			}
@@ -128,10 +134,21 @@ void removeAll(int y) {
 				p = cur;
 				prev->next = cur->next;
 				free(p);
+				p = prev;
+				dop->next = prev->next;
+				free(p);
 			}
 		}
 	}
+	node* prev = list, * cur = list->next, * p;
+	if (flag == 1 && list != NULL) {
+		p = list;
+		list = list->next;
+		cur = cur->next;
+		free(p);
+	}
 }
+
 void print() {
 	node* p = list;
 	if (p == NULL)cout << "\n List is empty";
@@ -152,10 +169,15 @@ int main() {
 
 		switch (choice) {
 		case 1:
-			int v;
-			cout << " Enter the number - ";
-			cin >> v;
-			add(v);
+			int c;
+			cout << " How many numbers do you want to add?";
+			cin >> c;
+			for (int i = 0; i < c; i++) {
+				int v;
+				cout << " Enter the number - ";
+				cin >> v;
+				add(v);
+			}
 			break;
 		case 2:
 			int u;
@@ -173,16 +195,10 @@ int main() {
 			cout << " Min - " << min << endl;
 			break;
 		case 5:
-			int rem;
-			cout << " Enter the number - ";
-			cin >> rem;
-			removeRep(rem);
+			removeRep();
 			break;
 		case 6:
-			int r;
-			cout << " Enter the number - ";
-			cin >> r;
-			removeAll(r);
+			removeAll();
 			break;
 		case 7:
 			print();
@@ -194,3 +210,4 @@ int main() {
 		}
 	}
 }
+
